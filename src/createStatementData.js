@@ -13,7 +13,7 @@ function createStatementData(invoice, plays) {
         let result = Object.assign({}, perf);
         result.play = playFor(result);
         result.amount = calculator.amount;
-        result.volumeCredits = volumeCreditsFor(result);
+        result.volumeCredits = calculator.volumeCredits;
         return result;
     }
 
@@ -27,16 +27,6 @@ function createStatementData(invoice, plays) {
 
     function playFor(perf) {
         return plays[perf.playID];
-    }
-
-    function volumeCreditsFor(perf) {
-        let result = 0;
-        // add volume credits
-        result += Math.max(perf.audience - 30, 0);
-        // add extra credit for every ten comedy attendees
-        if ('comedy' === perf.play.type) result += Math.floor(perf.audience / 5);
-
-        return result;
     }
 }
 
@@ -66,6 +56,16 @@ class PerformanceCalculator {
             default:
                 throw new Error(`unknow type: ${this.play.type}`);
         }
+        return result;
+    }
+
+    get volumeCredits() {
+        let result = 0;
+        // add volume credits
+        result += Math.max(this.performance.audience - 30, 0);
+        // add extra credit for every ten comedy attendees
+        if ('comedy' === this.play.type) result += Math.floor(this.performance.audience / 5);
+
         return result;
     }
 }
