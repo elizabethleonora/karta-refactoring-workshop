@@ -1,0 +1,19 @@
+{
+  "name": "karta-refactoring-workshop",
+  "version": "1.0.0",
+  "description": "Refactoring by Martin Fowler. Chapter 1",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "keywords": [
+    "refactoring",
+    "js",
+    "mocha"
+  ],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "mocha": "^6.1.4"
+  }
+}
