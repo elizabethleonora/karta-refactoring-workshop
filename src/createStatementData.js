@@ -9,7 +9,7 @@ function createStatementData(invoice, plays) {
     return statementData;
 
     function enrichPerformance(perf) {
-        const calculator = new PerformanceCalculator(perf, playFor(perf));
+        const calculator = createPerformanceCalculator(perf, playFor(perf));
         let result = Object.assign({}, perf);
         result.play = playFor(result);
         result.amount = calculator.amount;
@@ -27,6 +27,10 @@ function createStatementData(invoice, plays) {
 
     function playFor(perf) {
         return plays[perf.playID];
+    }
+
+    function createPerformanceCalculator(perf, play) {
+        return new PerformanceCalculator(perf, play);
     }
 }
 
