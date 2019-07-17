@@ -1,7 +1,15 @@
-module.exports = statement;
+module.exports = {
+    plainText: statement,
+    html: htmlStatement
+};
 let createStatementData = require('./createStatementData');
+
 function statement(invoice, plays) {
     return renderPlainText(createStatementData(invoice, plays));
+}
+
+function htmlStatement(invoice, plays) {
+    return renderHtml(createStatementData(invoice, plays));
 }
 
 function renderPlainText(data) {
@@ -21,4 +29,8 @@ function renderPlainText(data) {
             minimumFractionDigits: 2
         }).format(num);
     }
+}
+
+function renderHtml(statementData) {
+    return `<h1>Statement for ${statementData.customer}</h1>`;
 }

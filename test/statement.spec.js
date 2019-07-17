@@ -34,8 +34,13 @@ let invoice = {
 };
 
 describe('statement function', function () {
-    it('should create correct statement for BigCo', function () {
+    it('should create correct plain text statement for BigCo', function () {
         let result = 'Statement for BigCo\n Hamlet: $650.00 (55 seats)\n As you like it: $580.00 (35 seats)\n Othello: $500.00 (40 seats)\nAmount owed is $1,730.00\nYou earned 47 credits \n';
-        assert.equal(statement(invoice, plays), result);
+        assert.equal(statement.plainText(invoice, plays), result);
+    });
+
+    it('should create correct html statement for BigCo', function () {
+        let result = '<h1>Statement for BigCo</h1>';
+        assert.equal(statement.html(invoice, plays), result);
     });
 });
