@@ -3,15 +3,25 @@ module.exports = statement;
 function statement(invoice, plays) {
     let statementData = {};
     statementData.customer = invoice.customer;
-    statementData.performances = invoice.performances;
+    statementData.performances = invoice.performances.map(enrichPerformance);
     return renderPlainText(statementData, plays);
+
+    function enrichPerformance(perf) {
+        let result = Object.assign({}, perf);
+        result.play = playFor(result);
+        return result;
+    }
+
+    function playFor(perf) {
+        return plays[perf.playID];
+    }
 }
 
-function renderPlainText(data, plays) {
+function renderPlainText(data) {
     let result = `Statement for ${data.customer}\n`;
     for (let perf of data.performances) {
         //print line for this order
-        result += ` ${playFor(perf).name}: ${usd(amountFor(perf) / 100)} (${perf.audience} seats)\n`;
+        result += ` ${perf.play.name}: ${usd(amountFor(perf) / 100)} (${perf.audience} seats)\n`;
     }
 
     result += `Amount owed is ${usd(totalAmount() / 100)}\n`;
@@ -22,7 +32,7 @@ function renderPlainText(data, plays) {
     function amountFor(perf) {
         let result = 0;
 
-        switch (playFor(perf).type) {
+        switch (perf.play.type) {
             case 'tragedy':
                 result = 40000;
                 if (perf.audience > 30) {
@@ -37,14 +47,10 @@ function renderPlainText(data, plays) {
                 result += 300 * perf.audience;
                 break;
             default:
-                throw new Error(`unknow type: ${playFor(perf).type}`);
+                throw new Error(`unknow type: ${perf.play.type}`);
         }
 
         return result;
-    }
-
-    function playFor(perf) {
-        return plays[perf.playID];
     }
 
     function volumeCreditsFor(perf) {
@@ -52,7 +58,7 @@ function renderPlainText(data, plays) {
         // add volume credits
         result += Math.max(perf.audience - 30, 0);
         // add extra credit for every ten comedy attendees
-        if ('comedy' === playFor(perf).type) result += Math.floor(perf.audience / 5);
+        if ('comedy' === perf.play.type) result += Math.floor(perf.audience / 5);
 
         return result;
     }
