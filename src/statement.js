@@ -4,13 +4,32 @@ function statement(invoice, plays) {
     let statementData = {};
     statementData.customer = invoice.customer;
     statementData.performances = invoice.performances.map(enrichPerformance);
-    return renderPlainText(statementData, plays);
+    statementData.totalVolumeCredits = totalVolumeCredits(statementData);
+    statementData.totalAmount = totalAmount(statementData);
+    return renderPlainText(statementData);
 
     function enrichPerformance(perf) {
         let result = Object.assign({}, perf);
         result.play = playFor(result);
         result.amount = amountFor(result);
+        result.volumeCredits = volumeCreditsFor(result);
         return result;
+    }
+
+    function totalAmount(data) {
+        let result = 0;
+        for (let perf of data.performances) {
+            result += perf.amount;
+        }
+        return result;
+    }
+
+    function totalVolumeCredits(data) {
+        let volumeCredits = 0;
+        for (let perf of data.performances) {
+            volumeCredits += perf.volumeCredits;
+        }
+        return volumeCredits;
     }
 
     function playFor(perf) {
@@ -40,19 +59,6 @@ function statement(invoice, plays) {
 
         return result;
     }
-}
-
-function renderPlainText(data) {
-    let result = `Statement for ${data.customer}\n`;
-    for (let perf of data.performances) {
-        //print line for this order
-        result += ` ${perf.play.name}: ${usd(perf.amount / 100)} (${perf.audience} seats)\n`;
-    }
-
-    result += `Amount owed is ${usd(totalAmount() / 100)}\n`;
-    result += `You earned ${totalVolumeCredits()} credits \n`;
-
-    return result;
 
     function volumeCreditsFor(perf) {
         let result = 0;
@@ -63,6 +69,17 @@ function renderPlainText(data) {
 
         return result;
     }
+}
+
+function renderPlainText(data) {
+    let result = `Statement for ${data.customer}\n`;
+    for (let perf of data.performances) {
+        result += ` ${perf.play.name}: ${usd(perf.amount / 100)} (${perf.audience} seats)\n`;
+    }
+    result += `Amount owed is ${usd(data.totalAmount / 100)}\n`;
+    result += `You earned ${data.totalVolumeCredits} credits \n`;
+
+    return result;
 
     function usd(num) {
         return new Intl.NumberFormat('en-US', {
@@ -70,21 +87,5 @@ function renderPlainText(data) {
             currency: 'USD',
             minimumFractionDigits: 2
         }).format(num);
-    }
-
-    function totalVolumeCredits() {
-        let volumeCredits = 0;
-        for (let perf of data.performances) {
-            volumeCredits += volumeCreditsFor(perf);
-        }
-        return volumeCredits;
-    }
-
-    function totalAmount() {
-        let result = 0;
-        for (let perf of data.performances) {
-            result += perf.amount;
-        }
-        return result;
     }
 }
