@@ -1,12 +1,16 @@
 module.exports = statement;
 
 function statement(invoice, plays) {
+    return renderPlainText(createStatementData(invoice, plays));
+}
+
+function createStatementData(invoice, plays) {
     let statementData = {};
     statementData.customer = invoice.customer;
     statementData.performances = invoice.performances.map(enrichPerformance);
     statementData.totalVolumeCredits = totalVolumeCredits(statementData);
     statementData.totalAmount = totalAmount(statementData);
-    return renderPlainText(statementData);
+    return statementData;
 
     function enrichPerformance(perf) {
         let result = Object.assign({}, perf);
