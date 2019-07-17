@@ -8,11 +8,11 @@ function statement(invoice, plays) {
     for (let perf of invoice.performances) {
         volumeCredits += volumeCreditsFor(perf);
         //print line for this order
-        result += ` ${playFor(perf).name}: ${format(amountFor(perf) / 100)} (${perf.audience} seats)\n`;
+        result += ` ${playFor(perf).name}: ${usd(amountFor(perf) / 100)} (${perf.audience} seats)\n`;
         totalAmount += amountFor(perf);
     }
 
-    result += `Amount owed is ${format(totalAmount / 100)}\n`;
+    result += `Amount owed is ${usd(totalAmount / 100)}\n`;
     result += `You earned ${volumeCredits} credits \n`;
 
     return result;
@@ -55,7 +55,7 @@ function statement(invoice, plays) {
         return result;
     }
 
-    function format(num) {
+    function usd(num) {
         return new Intl.NumberFormat('en-US', {
             style: 'currency',
             currency: 'USD',
